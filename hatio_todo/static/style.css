@@ -1,0 +1,40 @@
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    max-width: 600px;
+}
+
+.summary {
+    font-size: 1rem;
+    color: #555;
+}
+
+.pending-todos h5,
+.completed-todos h5 {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.pending-todos ul,
+.completed-todos ul {
+    padding-left: 1.5em;
+}
+
+.completed-todos input[type="checkbox"] {
+    accent-color: #007bff;
+}
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.container {
+    max-width: 400px;
+}
+
+h2 {
+    color: #333;
+}
