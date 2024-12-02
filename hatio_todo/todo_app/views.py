@@ -3,13 +3,9 @@ from .forms import *
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
-from .forms import *
 import os
 from django.conf import settings
 from django.http import HttpResponse
-from django.template.loader import render_to_string
-import requests
-
 # Create your views here.
 
 def register_view(request) :
@@ -22,6 +18,8 @@ def register_view(request) :
         form = UserRegisterForm()
     
     return render(request, 'registration.html', {'form':form})
+
+
 
 def user_login(request) :
     if request.method == 'POST' :
@@ -40,13 +38,14 @@ def user_login(request) :
 
     return render(request, 'login.html', {'form' : form})
 
-@login_required
+# @login_required(login_url='user_login')
 def home(request):
     # Get all projects associated with the logged-in user
     projects = Project.objects.filter(user=request.user)
-    return render(request, 'index.html', {'projects': projects})
+    restored_projects = projects.filter(status='Restored')
+    deleted_projects = projects.filter(status='Deleted')
+    return render(request, 'index.html', {'restored_projects': restored_projects, 'deleted_projects' : deleted_projects})
 
-@login_required
 def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -60,15 +59,16 @@ def create_project(request):
 
     # Get the list of user's projects to display on the index page
     user_projects = Project.objects.filter(user=request.user)
-    return render(request, 'index.html', {'form': form, 'projects': user_projects})
+    return render(request, 'index.html', {'form': form, 'user_projects':user_projects})
 
 
-@login_required
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id, user=request.user)
     todos = project.todos.all()
     pending_todos = todos.filter(status='Pending')
     completed_todos = todos.filter(status='Completed')
+
+    print(todos)
     
     if request.method == 'POST':
         form = ToDoForm(request.POST)
@@ -116,7 +116,6 @@ def delete_todo(request, todo_id):
     return redirect('project_detail', project_id=todo.project.id)
 
 
-@login_required
 def edit_todo(request, todo_id):
     todo = get_object_or_404(ToDo, id=todo_id, project__user=request.user)  # Ensure the todo belongs to the logged-in user
     if request.method == 'POST':
@@ -132,14 +131,13 @@ def edit_todo(request, todo_id):
         'todo': todo,
     })
 
-@login_required
 def edit_project(request, project_id):
     project = get_object_or_404(Project, id=project_id, user=request.user)  # Ensure the project belongs to the logged-in user
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            return redirect('home')  # Redirect back to the home page (or wherever you need)
+            return redirect('home')  # Redirect back to the home page
     else:
         form = ProjectForm(instance=project)  # Prepopulate the form with current project details
 
@@ -149,7 +147,7 @@ def edit_project(request, project_id):
     })
 
 def logout_view(request):
-    logout(request)
+    logout(request)   
     return redirect('login')
 
 def export_project_gist(request, project_id):
@@ -187,3 +185,15 @@ def export_project_gist(request, project_id):
     response = HttpResponse(content=markdown_content, content_type='text/markdown')
     response['Content-Disposition'] = f'attachment; filename={file_name}'
     return response
+
+def restore(request, project_id) :
+    project = get_object_or_404(Project, id=project_id)
+
+    if project.status == 'Restored' :
+        project.status = 'Deleted'
+    else :
+        project.status = 'Restored'
+
+    project.save()
+
+    return redirect('home')

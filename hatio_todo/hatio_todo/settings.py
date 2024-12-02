@@ -127,3 +127,14 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#session timeout handling
+
+# SESSION_EXPIRE_SECONDS = 60
+
+# SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+
+
+# SESSION_TIMEOUT_REDIRECT = ''
+
+# SESSION_EXPIRE_AT_BROWSER_CLOSE=True

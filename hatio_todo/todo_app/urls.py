@@ -13,4 +13,5 @@ urlpatterns = [
     path('project/<int:project_id>/edit/', edit_project, name='edit_project'), 
     path('logout/', logout_view, name='logout'),
     path('project/<int:project_id>/export_gist/', export_project_gist, name='export_project_gist'),
+    path('project/<int:project_id>/status_change', restore, name='status_change')
 ]

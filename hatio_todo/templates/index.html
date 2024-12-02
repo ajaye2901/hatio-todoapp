@@ -12,7 +12,7 @@
     <header class="bg-primary text-white py-3 mb-4">
         <div class="container d-flex justify-content-between align-items-center">
             <h1 class="h3 mb-0">Todo Application</h1>
-            <a href="{% url 'login' %}">
+            <a href="{% url 'logout' %}">
                 <button id="login-btn" class="btn btn-light btn-sm">Logout</button>
             </a>
         </div>
@@ -47,8 +47,16 @@
                     <div class="card-body">
                         <h2 class="h5">Your Projects</h2>
                         <ul id="projects" class="list-group mt-3">
-                            {% for project in projects %}
+                            {% for project in restored_projects %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <form method="POST" action="{% url 'status_change' project.id %}" class="mr-2">
+                                        {% csrf_token %}
+                                        <input type="checkbox" 
+                                               checked 
+                                               class="mr-2"
+                                               onchange="this.form.submit()"> 
+                                       
+                                    </form>
                                     <span class="project-title">{{ project.title }}</span>
                                     <!-- View Button -->
                                     <a href="{% url 'project_detail' project.id %}" class="btn btn-info btn-sm">View</a>
@@ -62,6 +70,37 @@
                     </div>
                 </div>
             </section>
+
+
+            <!-- Deleted projects -->
+            <section class="col-12 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">Deleted Projects</h2>
+                        <ul id="projects" class="list-group mt-3">
+                            {% for project in deleted_projects %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <form method="POST" action="{% url 'status_change' project.id %}" class="mr-2">
+                                        {% csrf_token %}
+                                        <input type="checkbox" 
+                                               checked 
+                                               class="mr-2"
+                                               onchange="this.form.submit()"> 
+                                    </form>
+                                    <span class="project-title">{{ project.title }}</span>
+                                    <!-- View Button -->
+                                    <a href="{% url 'project_detail' project.id %}" class="btn btn-info btn-sm">View</a>
+                                    <!-- Edit Button -->
+                                    <a href="{% url 'edit_project' project.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No projects found.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 

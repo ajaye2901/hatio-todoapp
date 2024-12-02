@@ -21,4 +21,9 @@ class ToDoForm(forms.ModelForm) :
         model = ToDo
         fields = ['description'] 
 
+# class StatusChange(forms.ModelForm) :
+#     class Meta :
+#         model = Project
+#         fields = ['status']
+
 
